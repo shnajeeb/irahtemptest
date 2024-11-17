@@ -25,6 +25,7 @@ def main():
 
     elif option == "Fahrenheit to Celsius":
         st.info("💡 Tip: Water freezes at 32°F and boils at 212°F.")
+        st.markdown("<div style='display: flex; justify-content: center;'><input style='border-radius: 10px; padding: 5px;' placeholder='Enter temperature in Fahrenheit'></div>", unsafe_allow_html=True)
         fahrenheit = st.number_input("Enter temperature in Fahrenheit:", format="%.2f")
         if st.button("Convert to Celsius"):
             with st.spinner("Calculating..."):
@@ -41,4 +42,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
