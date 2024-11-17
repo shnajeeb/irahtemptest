@@ -1,46 +1,41 @@
 import streamlit as st
-import time
+from PIL import Image, ImageDraw, ImageFont
+import io
 
-def celsius_to_fahrenheit(celsius):
-    return (celsius * 9/5) + 32
+def create_image_from_text(text):
+    # Create a blank image with a white background
+    width, height = 600, 200
+    image = Image.new("RGB", (width, height), color="white")
+    
+    # Initialize ImageDraw
+    draw = ImageDraw.Draw(image)
+    
+    # Define a font (default font for simplicity)
+    font = ImageFont.load_default()
+    
+    # Calculate text width and height to center it
+    text_width, text_height = draw.textsize(text, font=font)
+    text_x = (width - text_width) // 2
+    text_y = (height - text_height) // 2
 
-def fahrenheit_to_celsius(fahrenheit):
-    return (fahrenheit - 32) * 5/9
+    # Add text to the image
+    draw.text((text_x, text_y), text, fill="black", font=font)
+    
+    return image
 
 def main():
-    st.title("🌡️ Interactive Temperature Converter")
-    st.subheader("Convert temperatures between Celsius and Fahrenheit seamlessly!")
+    st.title("🖼️ Text-to-Image Generator")
+    st.write("Enter any text below and see it converted into an image!")
 
-    option = st.radio("Choose a conversion type:", ("Celsius to Fahrenheit", "Fahrenheit to Celsius"))
+    user_input = st.text_input("Enter text here:")
 
-    if option == "Celsius to Fahrenheit":
-        st.info("💡 Tip: Water freezes at 0°C and boils at 100°C.")
-        celsius = st.number_input("Enter temperature in Celsius:", format="%.2f")
-        if st.button("Convert to Fahrenheit"):
-            with st.spinner("Calculating..."):
-                time.sleep(1)  # Simulating a delay for effect
-                fahrenheit = celsius_to_fahrenheit(celsius)
-                st.success(f"✅ {celsius}°C is equal to {fahrenheit:.2f}°F")
-                st.balloons()
-
-    elif option == "Fahrenheit to Celsius":
-        st.info("💡 Tip: Water freezes at 32°F and boils at 212°F.")
-        st.markdown("<div style='display: flex; justify-content: center;'><input style='border-radius: 10px; padding: 5px;' placeholder='Enter temperature in Fahrenheit'></div>", unsafe_allow_html=True)
-        fahrenheit = st.number_input("Enter temperature in Fahrenheit:", format="%.2f")
-        if st.button("Convert to Celsius"):
-            with st.spinner("Calculating..."):
-                time.sleep(1)  # Simulating a delay for effect
-                celsius = fahrenheit_to_celsius(fahrenheit)
-                st.success(f"✅ {fahrenheit}°F is equal to {celsius:.2f}°C")
-                st.balloons()
-
-    st.sidebar.header("About this App")
-    st.sidebar.write(
-        "This interactive temperature converter helps you switch between Celsius and Fahrenheit with ease. "
-        "It also provides helpful tips to understand the freezing and boiling points of water in both scales!"
-    )
+    if user_input:
+        st.write("Preview of the image created from your text:")
+        image = create_image_from_text(user_input)
+        buf = io.BytesIO()
+        image.save(buf, format="PNG")
+        byte_im = buf.getvalue()
+        st.image(byte_im, caption=f"Image created from: '{user_input}'", use_column_width=True)
 
 if __name__ == "__main__":
     main()
-
-
